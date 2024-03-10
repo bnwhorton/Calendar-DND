@@ -169,6 +169,7 @@ class Calendar {
                             if (!moon) {
                                 sendChat("Calendar DND", "/w gm Invalid Command!");
                             } else {
+                                log('moon= '+moon);
                                 getMoonImg(moon);
                                 calendarMenu();
                             }
@@ -179,6 +180,10 @@ class Calendar {
                         return;
                         case "show":
                             showCal();
+                        return;
+                        case "reset":
+                            setDefaults();
+                            calendarMenu();
                         return;
                     }
                 return;
@@ -289,7 +294,7 @@ function setAlarmDefaults() {
 function getOrdinal() {
     const date = state.calendar.day;
     const month = state.calendar.month;
-    state.calendar.ord = 30*(month-1) + date;
+    return state.calendar.ord = (30*(month-1) + date);
 }
 
 function getSuffix() {
@@ -333,62 +338,69 @@ function getMoon() {
     const year = state.calendar.year;
     const remainder = year/4 - Math.floor(year/4);
     let moonArray;
-    if (remainder === 0.25) {
+    if (remainder == 0.25) {
         moonArray = getMoonArray(2);
-    } else if (remainder === 0.5) {
+    } else if (remainder == 0.5) {
         moonArray = getMoonArray(3);
-    } else if (remainder === 0.75) {
+    } else if (remainder == 0.75) {
         moonArray = getMoonArray(4);
-    } else if (remainder === 0) {
+    } else if (remainder == 0) {
         moonArray = getMoonArray(1);
     } else {
         //Catch all
         moonArray = getMoonArray(1);
     }
     const moonNum = moonArray.split(",");
-    getMoonImg(moonNum[ord]);
+    log('ord= '+ord);
+    log('getmoon.moonNum= '+moonNum[ord])
+    log('year= '+year);
+    log('remainder= '+remainder);
+    getMoonImg(Number(moonNum[ord]));
 }
 
 function getMoonImg(moonNum) {
+    log('Running getMoonImg');
     let moon;
     let type;
-    if (Number(moonNum)==null) {
+    if (typeof moonNum === "string" || moonNum instanceof String) {
+        log('string');
         switch (moonNum) {
-            case "full moon":
+            case "Full Moon":
                 type = "Full Moon";
                 moon = "https://www.dropbox.com/s/yo8aqiyw8y8zbzh/full%20moon.jpg?dl=1";
             break;
-            case "waning gibbous":
+            case "Waning Gibbous":
                 type = "Waning Gibbous";
                 moon = "https://www.dropbox.com/s/lgffcyw68w1df9l/waning%20gibbous.jpg?dl=1"
             break;
-            case "last quarter":
+            case "Last Quarter":
                 type = "Last Quarter";
                 moon = "https://www.dropbox.com/s/o509ci5j2goqvqc/last%20quarter.jpg?dl=1";
             break;
-            case "waning crescent":
+            case "Waning Crescent":
                 type = "Waning Crescent";
                 moon = "https://www.dropbox.com/s/3fccjvk2v88hqqo/waning%20crescent.jpg?dl=1";
             break;
-            case "new moon":
+            case "New Moon":
                 type = "New Moon";
                 moon = "https://www.dropbox.com/s/jpq8tl2m00e8m0j/new%20moon.jpg?dl=1";
             break;
-            case "waxing crescent":
+            case "Waxing Crescent":
                 type = "Waxing Crescent";
                 moon = "https://www.dropbox.com/s/b8p388vrvv3jw2j/waxing%20crescent.jpg?dl=1";
             break;
-            case "first quarter":
+            case "First Quarter":
                 type = "First Quarter";
                 moon = "https://www.dropbox.com/s/glnn9q9swr5o3wk/first%20quarter.jpg?dl=1";
             break;
-            case "waxing gibbous":
+            case "Waxing Gibbous":
                 type = "Waxing Gibbous";
                 moon = "https://www.dropbox.com/s/b4li1bckebp4cua/waxing%20gibbous.jpg?dl=1";
             break;
         }
     } else {
-        switch (moonNum) {
+        //ugly type casting, TODO: fix
+        switch (Number(moonNum)) {
             case 1 || 0:
                 type = "Full Moon";
                 moon = "https://www.dropbox.com/s/yo8aqiyw8y8zbzh/full%20moon.jpg?dl=1";
@@ -422,6 +434,9 @@ function getMoonImg(moonNum) {
                 moon = "https://www.dropbox.com/s/b4li1bckebp4cua/waxing%20gibbous.jpg?dl=1";
             break;
         }
+        log('moonNum= '+moonNum);
+        log('type= '+type);
+        log('moon= '+moon);
         state.calendar.moonImg = moon;
         state.calendar.moon = type;
     }
@@ -470,7 +485,7 @@ function calendarMenu() {
             '<table>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Day: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setday --?{Day?|' + day + '}">' + day + suffix + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Month: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setmonth --?{Month?|' + state.calendar.month + '}">' + month + '</a></td></tr>' + //--
-            '<tr><td ' + calendar.style.tdReg + '>Year: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setyear --?{Year?|' + year + '}">' + year + '</a></td></tr>' + //--
+            '<tr><td ' + calendar.style.tdReg + '>Year: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setyear --?{Year?|' + state.calendar.year + '}">' + year + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Hour: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --sethour --?{Hour?|' + state.calendar.hour + '}">' + hour + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Minute: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setmin --?{Minute?|' + state.calendar.minute + '}">' + min + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Moon: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setmoon --?{Moon?|' + calendar.moons.join("|") + '}">' + moon + '</a></td></tr>' + //--
