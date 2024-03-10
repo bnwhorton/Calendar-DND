@@ -60,6 +60,7 @@ const styles = {
     header: 'style="color: rgb(126, 45, 64); font-size: 18px; text-align: left; font-variant: small-caps; font-family: Times, serif;"',
     sub: 'style="font-size: 11px; line-height: 13px; margin-top: -3px; font-style: italic;"',
     tdReg: 'style="text-align: right;"',
+    tdRegCenter: 'style="text-align: center;"',
     trTab: 'style="text-align: left; border-bottom: 1px solid #cccccc;"',
     tdTab: 'style="text-align: center; border-right: 1px solid #cccccc;"',
     span: 'style="display: inline; width: 10px; height: 10px; padding: 1px; border: 1px solid black; background-color: white;"'
@@ -176,11 +177,7 @@ class Calendar {
                             }
                         return;
                         case "toggle-moon":
-                            if (state.calendar.mtype) {
-                                state.calendar.mtype = false;
-                            } else {
-                                state.calendar.mtype = true;
-                            }
+                            state.calendar.mtype = !state.calendar.mtype;
                             calendarMenu();
                         return;
                         case "show":
@@ -192,7 +189,7 @@ class Calendar {
                     if (!args[1]) {
                         alarmMenu();
                     } else {
-                        if (args[1]=="new") {
+                        if (args[1]==="new") {
                             if (!args[2]) {
                                 sendChat("Calendar DND", "/w gm You must define a Title for your Alarm!");
                             } else {
@@ -462,7 +459,7 @@ function calendarMenu() {
             '<tr><td ' + calendar.style.tdReg + '>Hour: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --sethour --?{Hour?|' + state.calendar.hour + '}">' + hour + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Minute: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setmin --?{Minute?|' + state.calendar.minute + '}">' + min + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Moon: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setmoon --?{Moon?|' + calendar.moons.join("|") + '}">' + moon + '</a></td></tr>' + //--
-            '<tr><td ' + calendar.style.tdReg + '>Weather: </td><td ' + calendar.style.tdReg + '>' + weather + '</td></tr>' + //--
+            '<tr><td ' + calendar.style.tdReg + '>Weather: </td><td ' + calendar.style.tdRegCenter + '>' + weather + '</td></tr>' + //--
             '</table>' + //--
             '<div ' + calendar.style.divButton + '><a ' + calendar.style.buttonLarge + '" href="!cal --advtime --?{Amount?|1} --?{Type?|Short Rest|Long Rest|Hour|Minute|Day|Week|Month|Year}">Advance the Date</a></div>' + //--
             '<div ' + calendar.style.divButton + '><a ' + calendar.style.buttonLarge + '" href="!cal --weather --toggle">Toggle Weather Display</a></div>' + //--
@@ -482,7 +479,7 @@ function calendarMenu() {
             '<tr><td ' + calendar.style.tdReg + '>Year: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setyear --?{Year?|' + year + '}">' + year + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Hour: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --sethour --?{Hour?|' + state.calendar.hour + '}">' + hour + '</a></td></tr>' + //--
             '<tr><td ' + calendar.style.tdReg + '>Minute: </td><td ' + calendar.style.tdReg + '><a ' + calendar.style.buttonMedium + '" href="!cal --setmin --?{Minute?|' + state.calendar.minute + '}">' + min + '</a></td></tr>' + //--
-            '<tr><td ' + calendar.style.tdReg + '>Weather: </td><td ' + calendar.style.tdReg + '>' + weather + '</td></tr>' + //--
+            '<tr><td ' + calendar.style.tdReg + '>Weather: </td><td ' + calendar.style.tdRegCenter + '>' + weather + '</td></tr>' + //--
             '</table>' + //--
             '<div ' + calendar.style.divButton + '><a ' + calendar.style.buttonLarge + '" href="!cal --advtime --?{Amount?|1} --?{Type?|Short Rest|Long Rest|Hour|Minute|Day|Week|Month|Year}">Advance the Date</a></div>' + //--
             '<div ' + calendar.style.divButton + '><a ' + calendar.style.buttonLarge + '" href="!cal --weather --toggle">Toggle Weather Display</a></div>' + //--
@@ -651,10 +648,10 @@ function advDate(amount, type) {
 };
 
 function rollWeather() {
-    let temp;
-    let wind;
-    let precip;
-    let season;
+    let temp ='';
+    let wind='';
+    let precip='';
+    let season='';
     const ordinal = state.calendar.ord;
     if (ordinal > 330 || ordinal <= 75) {
         season = "Winter";
@@ -669,71 +666,80 @@ function rollWeather() {
     if (roll>=15 && roll <=17) {
         switch (season) {
             case 'Winter':
-                temp="It is a bitterly cold winter day. ";
+                temp="It is a bitterly cold winter day.";
             break;
             case 'Spring':
-                temp="It is a cold spring day. ";
+                temp="It is a cold spring day.";
             break;
             case 'Summer':
-                temp="It is a cool summer day. ";
+                temp="It is a cool summer day.";
             break;
             case 'Fall':
-                temp="It is a cold fall day. ";
+                temp="It is a cold fall day.";
             break;
         }
     } else if (roll>=18 && roll<=20) {
         switch (season) {
             case 'Winter':
-                temp="It is a mild winter day. ";
+                temp="It is a mild winter day.";
             break;
             case 'Spring':
-                temp="It is a hot spring day. ";
+                temp="It is a hot spring day.";
             break;
             case 'Summer':
-                temp="It is a blisteringly hot summer day. ";
+                temp="It is a blisteringly hot summer day.";
             break;
             case 'Fall':
-                temp="It is a hot fall day. ";
+                temp="It is a hot fall day.";
             break;
         }
     } else {
         switch (season) {
             case 'Winter':
-                temp="It is a cold winter day. ";
+                temp="It is a cold winter day.";
             break;
             case 'Spring':
-                temp="It is a mild spring day. ";
+                temp="It is a mild spring day.";
             break;
             case 'Summer':
-                temp="It is a warm summer day. ";
+                temp="It is a warm summer day.";
             break;
             case 'Fall':
-                temp="It is a mild fall day. ";
+                temp="It is a mild fall day.";
             break;
         }
     }
     roll=randomInteger(21);
     if (roll>=15 && roll<=17) {
         if (season=="Winter") {
-            precip="snow falls softly on the ground.";
+            precip="Snow falls softly on the ground.";
         } else {
-            precip="it is raining lightly.";
+            precip="It is raining lightly.";
         }
     } else if (roll>=18 && roll<=20) {
         if (season=="Winter") {
-            precip="snow falls thick and fast from the sky.";
+            precip="Snow falls thick and fast from the sky.";
         } else {
-            precip="a torretial rain is falling.";
+            precip="A torretial rain is falling.";
         }
     } else {
         roll=randomInteger(2);
         if (roll==1) {
-            precip="the sky is overcast.";
+            precip="The sky is overcast.";
         } else {
-            precip="the sky is clear.";
+            precip="The sky is clear.";
         }
     }
-    const forecast = temp+wind+precip;
+
+    roll=randomInteger(21);
+    if (roll>=5 && roll<=17) {
+        wind="A light breeze blows through the air.";
+    } else if (roll>=18 && roll<=20) {
+        wind="A strong wind blows through the air.";
+    } else {
+        wind="The air is still.";
+    }
+    const forecast = temp+' '+wind+' '+precip;
     state.calendar.weather = forecast;
 };
 
