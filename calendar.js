@@ -355,19 +355,36 @@ function getMoonImg(moonNum) {
     if (Number(moonNum)==null) {
         switch (moonNum) {
             case "full moon":
-
+                type = "Full Moon";
+                moon = "https://www.dropbox.com/s/yo8aqiyw8y8zbzh/full%20moon.jpg?dl=1";
             break;
             case "waning gibbous":
-
+                type = "Waning Gibbous";
+                moon = "https://www.dropbox.com/s/lgffcyw68w1df9l/waning%20gibbous.jpg?dl=1"
             break;
             case "last quarter":
-
+                type = "Last Quarter";
+                moon = "https://www.dropbox.com/s/o509ci5j2goqvqc/last%20quarter.jpg?dl=1";
             break;
             case "waning crescent":
-
+                type = "Waning Crescent";
+                moon = "https://www.dropbox.com/s/3fccjvk2v88hqqo/waning%20crescent.jpg?dl=1";
             break;
             case "new moon":
-
+                type = "New Moon";
+                moon = "https://www.dropbox.com/s/jpq8tl2m00e8m0j/new%20moon.jpg?dl=1";
+            break;
+            case "waxing crescent":
+                type = "Waxing Crescent";
+                moon = "https://www.dropbox.com/s/b8p388vrvv3jw2j/waxing%20crescent.jpg?dl=1";
+            break;
+            case "first quarter":
+                type = "First Quarter";
+                moon = "https://www.dropbox.com/s/glnn9q9swr5o3wk/first%20quarter.jpg?dl=1";
+            break;
+            case "waxing gibbous":
+                type = "Waxing Gibbous";
+                moon = "https://www.dropbox.com/s/b4li1bckebp4cua/waxing%20gibbous.jpg?dl=1";
             break;
         }
     } else {
