@@ -81,7 +81,7 @@ class Calendar {
 
     handleInput(msg) {
         const args = msg.content.split(/\s+--/);
-        if (msg.type!="api") {
+        if (msg.type!=="api") {
             return;
         }
         if (playerIsGM(msg.playerid)) {
@@ -115,7 +115,7 @@ class Calendar {
                             if (!year) {
                                 sendChat("Calendar DND", "/w gm Invalid Number!");
                             } else {
-                                state.calendar.year += year;
+                                state.calendar.year = year;
                                 calendarMenu();
                             }
                         return;
@@ -124,12 +124,8 @@ class Calendar {
                             if (!hour) {
                                 sendChat("Calendar DND", "/w gm Invalid Number!");
                             } else {
-                                if (state.calendar.wtype) {
-                                    rollWeather();
-                                    calendarMenu();
-                                } else {
-                                    calendarMenu();
-                                }
+                                state.calendar.hour = hour;
+                                calendarMenu();
                             }
                         return;
                         case "setmin":
@@ -137,6 +133,7 @@ class Calendar {
                             if (!min) {
                                 sendChat("Calendar DND", "/w gm Invalid Number!");
                             } else {
+                                state.calendar.minute = min;
                                 calendarMenu();
                             }
                         return;
@@ -207,7 +204,7 @@ class Calendar {
                                 }
                                 createAlarm(title, date, time);
                             }
-                        } else if (args[1]!=="" && args[1]!=" ") {
+                        } else if (args[1]!=="" && args[1]!==" ") {
                             if (!args[2]) {
                                 alarmMenu(Number(args[1]))
                             } else if (args[2].includes("settitle")) {
@@ -262,7 +259,7 @@ class Calendar {
         on("chat:message", this.handleInput);
         log("Calendar DND - Registered Event Handlers!");
     };
-};
+}
 
 const calendar = new Calendar();
 
@@ -282,7 +279,7 @@ function setDefaults() {
         mtype: true
     };
     log("Calendar DND - Successfully registered defaults!");
-};
+}
 
 function setAlarmDefaults() {
     state.alarms = [];
@@ -292,25 +289,23 @@ function setAlarmDefaults() {
 function getOrdinal() {
     const date = state.calendar.day;
     const month = state.calendar.month;
-    let ordinal = state.calendar.ord;
-    ordinal = 30*(month-1) + date;
-    state.calendar.ord = ordinal;
-};
+    state.calendar.ord = 30*(month-1) + date;
+}
 
 function getSuffix() {
     const date = state.calendar.day;
     let suffix;
-    if (date == 1 || date == 21) {
+    if (date === 1 || date === 21) {
         suffix = "st";
-    } else if (date == 2 || date == 22) {
+    } else if (date === 2 || date === 22) {
         suffix = "nd";
-    } else if (date == 3 || date == 23) {
+    } else if (date === 3 || date === 23) {
         suffix = "rd";
     } else {
         suffix = "th";
     }
     return suffix;
-};
+}
 
 function getDate() {
     let day = state.calendar.ord;
@@ -331,25 +326,28 @@ function getDate() {
     }
     state.calendar.day = date;
     state.calendar.monthName = month;
-};
+}
 
 function getMoon() {
     const ord = state.calendar.ord;
     const year = state.calendar.year;
     const remainder = year/4 - Math.floor(year/4);
     let moonArray;
-    if (remainder == 0.25) {
+    if (remainder === 0.25) {
         moonArray = getMoonArray(2);
-    } else if (remainder == 0.5) {
+    } else if (remainder === 0.5) {
         moonArray = getMoonArray(3);
-    } else if (remainder == 0.75) {
+    } else if (remainder === 0.75) {
         moonArray = getMoonArray(4);
-    } else if (remainder == 0) {
+    } else if (remainder === 0) {
+        moonArray = getMoonArray(1);
+    } else {
+        //Catch all
         moonArray = getMoonArray(1);
     }
     const moonNum = moonArray.split(",");
     getMoonImg(moonNum[ord]);
-};
+}
 
 function getMoonImg(moonNum) {
     let moon;
@@ -373,7 +371,7 @@ function getMoonImg(moonNum) {
             break;
         }
     } else {
-        switch (Number(moonNum)) {
+        switch (moonNum) {
             case 1 || 0:
                 type = "Full Moon";
                 moon = "https://www.dropbox.com/s/yo8aqiyw8y8zbzh/full%20moon.jpg?dl=1";
@@ -410,7 +408,7 @@ function getMoonImg(moonNum) {
         state.calendar.moonImg = moon;
         state.calendar.moon = type;
     }
-};
+}
 
 function getMoonArray(num) {
     let moonArray;
@@ -429,7 +427,7 @@ function getMoonArray(num) {
         break;
     }
     return moonArray;
-};
+}
 
 function calendarMenu() {
     getDate();
@@ -527,7 +525,7 @@ function calendarMenu() {
             '</div>'
         );
     }
-};
+}
 
 function showCal() {
     getDate();
@@ -546,7 +544,7 @@ function showCal() {
     const weather = state.calendar.weather;
     getMoon();
     const moon = state.calendar.moon;
-    const moonImg = '<img src="' + state.calendar.moonImg + '" style="width:30px; height:30px;">';
+    const moonImg = '<img alt="moon state" src="' + state.calendar.moonImg + '" style="width:30px; height:30px;">';
     if (state.calendar.wtype && state.calendar.mtype) {
         sendChat("Calendar DND", "<div " + calendar.style.divMenu + ">" + //--
             '<div ' + calendar.style.header + '>Calendar</div>' + //--
@@ -590,7 +588,7 @@ function showCal() {
             '</div>'
         );
     }
-};
+}
 
 function advDate(amount, type) {
     let year = state.calendar.year;
@@ -645,12 +643,12 @@ function advDate(amount, type) {
     state.calendar.hour = hour;
     state.calendar.minute = min;
     getDate();
-};
+}
 
 function rollWeather() {
     let temp ='';
-    let wind='';
-    let precip='';
+    let wind;
+    let precip;
     let season='';
     const ordinal = state.calendar.ord;
     if (ordinal > 330 || ordinal <= 75) {
@@ -711,20 +709,20 @@ function rollWeather() {
     }
     roll=randomInteger(21);
     if (roll>=15 && roll<=17) {
-        if (season=="Winter") {
+        if (season==="Winter") {
             precip="Snow falls softly on the ground.";
         } else {
             precip="It is raining lightly.";
         }
     } else if (roll>=18 && roll<=20) {
-        if (season=="Winter") {
+        if (season==="Winter") {
             precip="Snow falls thick and fast from the sky.";
         } else {
             precip="A torretial rain is falling.";
         }
     } else {
         roll=randomInteger(2);
-        if (roll==1) {
+        if (roll===1) {
             precip="The sky is overcast.";
         } else {
             precip="The sky is clear.";
@@ -739,9 +737,8 @@ function rollWeather() {
     } else {
         wind="The air is still.";
     }
-    const forecast = temp+' '+wind+' '+precip;
-    state.calendar.weather = forecast;
-};
+    state.calendar.weather = temp+' '+wind+' '+precip;
+}
 
 function alarmMenu(num) {
     const alarm = state.alarms[num];
@@ -755,7 +752,7 @@ function alarmMenu(num) {
         alarmList = String(alarmList).replace(",","|");
     }
     if (!alarm) {
-        if (!len || len == 0) {
+        if (!len || len === 0) {
             sendChat("Calendar DND", "/w gm <div " + calendar.style.divMenu + ">" + //--
                 '<div ' + calendar.style.header + '>Alarm Menu</div>' + //--
                 '<div ' + calendar.style.arrow + '></div>' + //--
@@ -796,7 +793,7 @@ function alarmMenu(num) {
             '</div>'
         );
     }
-};
+}
 
 function createAlarm(title, date, time) {
     const num = state.alarms.length;
@@ -817,7 +814,7 @@ function createAlarm(title, date, time) {
     });
     sendChat("Calendar DND", `/w gm Alarm #${num}: \"${title}\" created!`);
     alarmMenu(num);
-};
+}
 
 function editAlarm(num, option, val) {
     const alarm = state.alarms[Number(num)];
@@ -833,12 +830,12 @@ function editAlarm(num, option, val) {
                 name: "Alarm #" + num
             });
         }
-        if (option=="title") {
+        if (option==="title") {
             if (title && title!=="" && title!==" ") {
                 hand.set("notes", title);
             }
             state.alarms[num].title = val;
-        } else if (option=="date") {
+        } else if (option==="date") {
             hand.get("gmnotes",function(gmnotes) {
                 let datetime=String(gmnotes).split(";")
                 let rdate=datetime[0];
@@ -846,10 +843,10 @@ function editAlarm(num, option, val) {
                 if (val) {
                     rdate=val;
                 }
-                if (rdate==undefined) {
+                if (rdate===undefined) {
                     rdate="";
                 }
-                if (rtime==undefined) {
+                if (rtime===undefined) {
                     rtime="";
                 }
                 datetime=rdate+";"+rtime;
@@ -859,7 +856,7 @@ function editAlarm(num, option, val) {
             state.alarms[num].day = Number(splitDate[0]);
             state.alarms[num].month = Number(splitDate[1]);
             state.alarms[num].year = Number(splitDate[2]);
-        } else if (option=="time") {
+        } else if (option==="time") {
             hand.get("gmnotes",function(gmnotes) {
                 let datetime=String(gmnotes).split(";")
                 let rdate=datetime[0];
@@ -867,10 +864,10 @@ function editAlarm(num, option, val) {
                 if (val!==undefined) {
                     rtime=val;
                 }
-                if (rdate==undefined) {
+                if (rdate===undefined) {
                     rdate="";
                 }
-                if (rtime==undefined) {
+                if (rtime===undefined) {
                     rtime="";
                 }
                 datetime=rdate+";"+rtime;
@@ -881,15 +878,15 @@ function editAlarm(num, option, val) {
             state.alarms[num].minute = Number(splitTime[1]);
         }
     }
-};
+}
 
 function chkAlarms() {
     const alarmList = state.alarms;
     for (let i=0;i<alarmList.length;i++) {
         const alarm = alarmList[i];
         if (alarm.hour) {
-            if (alarm.year == state.calendar.year) {
-                if (alarm.month == state.calendar.month) {
+            if (alarm.year === state.calendar.year) {
+                if (alarm.month === state.calendar.month) {
                     if (alarm.day>=state.calendar.day && !alarm.day>state.calendar.day+7) {
                         if (alarm.hour>=state.calendar.hour && !alarm.hour>state.calendar.hour + 12) {
                             if (alarm.minute>=state.calendar.minute && !alarm.minute>state.calendar.minute + 30) {
@@ -901,8 +898,8 @@ function chkAlarms() {
                 }
             }
         } else {
-            if (alarm.year == state.calendar.year) {
-                if (alarm.month == state.calendar.month) {
+            if (alarm.year === state.calendar.year) {
+                if (alarm.month === state.calendar.month) {
                     if (alarm.day>=state.calendar.day && !alarm.day>state.calendar.day+7) {
                         sendChat("Calendar DND", `/w gm Alarm #${i}: \"${alarm.title}\" triggered!`);
                         state.alarms.splice(i)
