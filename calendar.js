@@ -261,6 +261,7 @@ class Calendar {
 
     registerEventHandlers() {
         on("chat:message", this.handleInput);
+        log("Calendar DND - Registered Event Handlers!");
     };
 }
 
@@ -281,10 +282,12 @@ function setDefaults() {
         wtype: true,
         mtype: true
     };
+    log("Calendar DND - Successfully registered defaults!");
 }
 
 function setAlarmDefaults() {
     state.alarms = [];
+    log("Calendar DND - Successfully registered Alarm defaults!");
 }
 
 function getOrdinal() {
@@ -347,8 +350,6 @@ function getMoon() {
         moonArray = getMoonArray(1);
     }
     const moonNum = moonArray.split(",");
-    log('getmoon.moonNum= '+moonNum[ord])
-    log('remainder= '+remainder);
     getMoonImg(Number(moonNum[ord]));
 }
 
@@ -426,7 +427,6 @@ function getMoonImg(moonNum) {
                 moon = "https://www.dropbox.com/s/b4li1bckebp4cua/waxing%20gibbous.jpg?dl=1";
             break;
         }
-        log('type= '+type);
         state.calendar.moonImg = moon;
         state.calendar.moon = type;
     }
