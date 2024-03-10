@@ -169,7 +169,6 @@ class Calendar {
                             if (!moon) {
                                 sendChat("Calendar DND", "/w gm Invalid Command!");
                             } else {
-                                log('moon= '+moon);
                                 getMoonImg(moon);
                                 calendarMenu();
                             }
@@ -262,7 +261,6 @@ class Calendar {
 
     registerEventHandlers() {
         on("chat:message", this.handleInput);
-        log("Calendar DND - Registered Event Handlers!");
     };
 }
 
@@ -283,12 +281,10 @@ function setDefaults() {
         wtype: true,
         mtype: true
     };
-    log("Calendar DND - Successfully registered defaults!");
 }
 
 function setAlarmDefaults() {
     state.alarms = [];
-    log("Calendar DND - Successfully registered Alarm defaults!");
 }
 
 function getOrdinal() {
@@ -351,19 +347,15 @@ function getMoon() {
         moonArray = getMoonArray(1);
     }
     const moonNum = moonArray.split(",");
-    log('ord= '+ord);
     log('getmoon.moonNum= '+moonNum[ord])
-    log('year= '+year);
     log('remainder= '+remainder);
     getMoonImg(Number(moonNum[ord]));
 }
 
 function getMoonImg(moonNum) {
-    log('Running getMoonImg');
     let moon;
     let type;
     if (typeof moonNum === "string" || moonNum instanceof String) {
-        log('string');
         switch (moonNum) {
             case "Full Moon":
                 type = "Full Moon";
@@ -434,9 +426,7 @@ function getMoonImg(moonNum) {
                 moon = "https://www.dropbox.com/s/b4li1bckebp4cua/waxing%20gibbous.jpg?dl=1";
             break;
         }
-        log('moonNum= '+moonNum);
         log('type= '+type);
-        log('moon= '+moon);
         state.calendar.moonImg = moon;
         state.calendar.moon = type;
     }
